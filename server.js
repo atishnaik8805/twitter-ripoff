@@ -6,7 +6,7 @@ const  exphbs = require('express-handlebars');
 const bodyparser = require('body-parser');
 
 const userController = require('./controllers/userController');
-
+const TweetController = require('./controllers/TweetController');
 var app = express();
 app.use(bodyparser.urlencoded({
     extended: true
@@ -23,3 +23,4 @@ app.listen(3000, ()=> {
 })
 
 app.use('/user', userController);
+app.use('/tweet', TweetController);

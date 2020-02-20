@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost:27017/TwitterDB', {useNewUrlParser:true} , (err) => {
+var db_instance = null
+mongoose.connect('mongodb://localhost:27017/TwitterDB', {useNewUrlParser:true} , (err,db) => {
     if(!err){
-     console.log('MongoDB Connection Succesfull')
+     console.log('MongoDB Connection Succesfull');
     }
     else {
         console.log('Error in connection:'+err);
@@ -10,3 +11,4 @@ mongoose.connect('mongodb://localhost:27017/TwitterDB', {useNewUrlParser:true} ,
 });
 
 require('./user.model');
+require('./tweets.model');

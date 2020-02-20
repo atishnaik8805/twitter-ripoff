@@ -1,0 +1,24 @@
+<h3><a class="btn btn-secondary" href="/tweet"><i class="fa fa-plus"></i> Change User</a> <a class="btn btn-secondary" href="/tweet/AET"><i class="fa fa-plus"></i> Add a new tweet</a> Tweets List</h3>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Tweet</th>
+            <th>Date</th>
+            <th>Hastags</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each ListofTweets}}
+        <tr>
+            <td>{{this.Tweet}}</td>
+            <td>{{this.Date}}</td>
+            <td>{{this.Hashtags}}</td>
+            <td>
+                <a href="/tweet/{{this._id}}"><i class="fa fa-pencil fa-lg" aria-hidden="true"></i></a>
+                <a href="/tweet/delete/{{this._id}}" onclick="return confirm('Are you sure to delete this record ?');"><i class="fa fa-trash fa-lg" aria-hidden="true"></i></a>
+            </td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
