@@ -5,4 +5,4 @@ This is an App that shows the working of the twitter application, Which for now 
 
 2.After doing this run npm install in the twitter-ripoff level and then move into the twitter-clinet folder and then once again run npm install
 
-3.Finally run node server.js / nodemon server.js after moving back into the twitter-backend folder. This will run your application
+3.Finally run backend do node server.js / nodemon server.js after moving back into the twitter-backend folder. This will run your backend application, then to run the front end react go to twitter-client and run npm start
