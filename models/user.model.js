@@ -13,6 +13,10 @@ var userSchema = new mongoose.Schema({
         type: String,
         required: 'This is required'
     },
+    confirmPassword: {
+         type: String,
+         required: 'This is required'       
+    },
     fullName: {
         type: String,
         required: 'This is required'

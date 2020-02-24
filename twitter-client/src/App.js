@@ -2,48 +2,70 @@ import React, { Component } from 'react';
 import  { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import './App.css';
 
-import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
+
+import {Provider} from 'react-redux';
+//import store from './redux/store';
+
+// import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
 import createMuiTheme from '@material-ui/core/styles/createMuiTheme';
+import { ThemeProvider } from '@material-ui/styles';
+import themeFile from './util/theme';
+import jwtDecode from 'jwt-decode'
 
 import Navbar from './Components/Navbar';
+import AuthRoute from  './util/AuthRoute';
 
 import home from './pages/home';
 import login from './pages/login';
 import signup from './pages/signup';
 
-const theme = createMuiTheme({
-  palette: {
-    primary: {
-      light: '#33c9dc',
-      main: '#00bcd4',
-      dark: '#008394',
-      contrastText: '#fff'
-    },
-    secondary: {
-      light: '#ff6333',
-      main: '#ff3d00',
-      dark: '#b22a00',
-      contrastText: '#fff'
-    }
-  }
-});
+const theme = createMuiTheme(themeFile);
+
+let authenticated;
+const token = localStorage.TweetToken;
+if(token) {
+  console.log('in the hhh');
+ const decodedToken = jwtDecode(token);
+ console.log(decodedToken);
+ if(decodedToken.exp * 1000 < Date.now()){
+   console.log('unhjjd')
+   window.location.href = '/login';
+   authenticated = false;
+ }
+ else {
+   console.log(authenticated);
+   authenticated = true;
+ }
+}
+/*
+/*
+ <html>
+            <AuthRoute exact path='/login' component={login} authenticated={authenticated}/>
+           <AuthRoute exact path='/signup' component={signup} authenticated={authenticated}/>
+ </html>
+}*/
+
 class App extends Component {
   render() {
   return (
-    <MuiThemeProvider theme={theme}>
+    <ThemeProvider theme={theme}>
+      {/* <Provider store={store}> */}
       <div className="App">
        <Router>
          <Navbar />
          <div className="container">
          <Switch>
            <Route exact path="/" component={home}/>
-           <Route exact path="/login" component={login}/>
-           <Route exact path="/signup" component={signup}/>
+           {/* <Route exact path="/login" component={login}/>
+           <Route exact path="/signup" component={signup}/> */}
+           <AuthRoute exact path='/login' component={login} authenticated={authenticated}/>
+           <AuthRoute exact path='/signup' component={signup} authenticated={authenticated}/>
          </Switch>
          </div>
        </Router>
     </div>
-    </MuiThemeProvider>
+      {/* </Provider> */}
+    </ThemeProvider>
   );
 }
 }

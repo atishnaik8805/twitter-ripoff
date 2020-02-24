@@ -2,6 +2,19 @@ const expresss = require('express');
 var router = expresss.Router();
 const mongoose = require('mongoose');
 const user = mongoose.model('users');
+const http = require('http');
+const jwt = require('jsonwebtoken');
+
+const isEmpty = (string) => {
+    if (string.trim() === '') return true;
+    else return false;
+  };
+
+const isEmail = (email) => {
+    const regEx = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if (email.match(regEx)) return true;
+    else return false;
+};
 
 router.get('/', (req,res)=>{
     res.render("user/addOrEdit",{
@@ -9,41 +22,159 @@ router.get('/', (req,res)=>{
     });
 });
 
-router.post('/', (req,res)=>{
-    if(req.body._id == '')
+router.post('/login', (req,res)=>{
+    //req.body = req.query
+    login(req,res);
+});
+
+router.post('/register', (req,res)=>{
+    //req.body = req.query
+    console.log(req.body)
+    console.log(req.query)
+    if(!req.body._id)
     insertUserRecord(req,res);
     else
     updateRecord(req,res);
 });
 
-function insertUserRecord(req,res) {
- var newUser = new user();
- newUser.fullName = req.body.fullName;
- newUser.email = req.body.email;
- newUser.username = req.body.username;
- newUser.password = req.body.password;
- newUser.city = req.body.city;
- newUser.save((err,doc)=>{
-     if(!err){
-         console.log('in here');
-         res.redirect('user/list');
+function login(req,res) {
+    var query = {email : req.body.email, password : req.body.password}
+    var Verr = handleValidation(query, res);
+    if (Verr) {
+        user.findOne(query, (err,doc) => {
+            console.log('doc', doc);
+            if(!err && doc){
+              console.log(doc)
+              let result = {
+                      email: doc.email,
+                      pwd: doc.password
+                  };
+                if(result.pwd == req.body.password)
+                {
+                    // res.render('user/tweetsList', {
+                    //     viewTitle: "Tweets List",
+                    //     ListofTweets: [{Tweet: "Hello World",Date: "19/02/2020",Hashtags: ['hello','firstTweet']}]
+                    // });
+                    //res.writeHead(200, {"Content-Type": "application/json"});
+                    var token = jwt.sign({result: result}, 'secretKey');
+                    res.send({login:"Sucess", token: token});
+                }
+                
+            }
+            else{
+                console.log('in');
+                handleLoginError(err,res);
+            }
+        })
+    }
+  }
 
-     }
-     else
-     {
-         if(err.name == 'ValidationError' ) {
-             handleValidationError(err , req.body);
-             res.render("user/addOrEdit",{
-                viewTitle: "Insert User",
-                user: req.body
-            });
-         }
-         else
-         console.log('Error during record insertion', err);
-     }
- });
+
+function VerifyToken(req,res,next) {
+    const bearerHeader = req.headers['authorization'];
+    if(typeof bearerHeader != 'undefined') {
+       const bearer = bearerHeader.split(' ');
+       const bearertoken = bearer[1];
+       req.token = bearertoken;
+       next();
+    }
+    else {
+        res.sendStatus(403);
+    }
 }
 
+function handleLoginError(err, res)
+{
+  return res.status(403).json({errResponse:{general: "Wrong Credentials"}});  
+}
+
+function handleValidation(query, res) {
+    if (query.email) {
+        emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if (!emailRegex.test(query.email)) {
+            // res.send({emailerror: "Invalid format of Email"});
+            res.status(403).json({errResponse: {email: "Invalid format of Email"}});
+        }
+        return emailRegex.test(query.email)
+    }
+    else {
+        res.status(403).json({errResponse: {email: "No email provided"}});
+        return false
+    }
+}
+
+function insertUserRecord(req,res) {
+ var validateError = ValidateInputs(req, res)
+ console.log('validateErro', validateError);
+ if (!validateError) {
+    var newUser = new user();
+    newUser.fullName = req.body.fullName;
+    newUser.email = req.body.email;
+    newUser.username = req.body.username;
+    newUser.password = req.body.password;
+    newUser.confirmPassword = req.body.confirmPassword;
+    newUser.save((err,doc)=>{
+        if(!err){
+            console.log('in here');
+            var newuserdata = {
+                email : newUser.email,
+                password: newUser.password
+            } 
+            //res.redirect('user/list');
+            var token = jwt.sign({newuserdata : newuserdata}, 'secretKey');
+            res.status(200).json({register:"Sucess", token: token});
+   
+        }
+        else
+        {
+            if(err.name == 'ValidationError' ) {
+                handleValidationError(err , req.body);
+                res.render("user/addOrEdit",{
+                   viewTitle: "Insert User",
+                   user: req.body
+               });
+            }
+            else
+            console.log('Error during record insertion', err);
+        }
+    });
+ }
+} 
+
+function ValidateInputs(req,res) {
+    var errors = {}
+    console.log(req.body)
+    if(isEmpty(req.body.email)) {
+        errors.email = "This is required"
+    } else 
+    if (!isEmail(req.body.email)) {
+        errors.email = "Must be a valid Email"
+    } 
+    
+    if(isEmpty(req.body.password)) {
+        errors.password = "This is required"
+    } 
+    if(isEmpty(req.body.confirmPassword)) {
+        errors.confirmPassword = "This is required"
+    } 
+     if(isEmpty(req.body.username)) {
+        errors.username = "This is required"
+    }
+    if (isEmpty(req.body.fullName)) {
+        errors.fullName = "This is required"
+    } 
+     if(!isEmpty(req.body.password) && !isEmpty(req.body.confirmPassword) && !(req.body.password.trim() == req.body.confirmPassword.trim() )) {
+        errors.confirmPassword = "Password Must be similiar"
+    }
+
+    if (Object.keys(errors).length > 0) {
+        res.status(400).json({errResponse : errors});
+        return true
+    }
+    else {
+        return false
+    }
+}
 function updateRecord(req,res){
     user.findOneAndUpdate({_id: req.body._id} , req.body, {new: true}, (err,doc) => {
         if(!err) {

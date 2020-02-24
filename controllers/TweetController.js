@@ -10,6 +10,7 @@ router.get('/', (req,res)=>{
     });
 });
 
+
 router.post('/list', (req,res)=>{
     tweet.find((err,docs)=>{
         if(!err){
@@ -22,11 +23,13 @@ router.post('/list', (req,res)=>{
             }
             });
             console.log(data);
-            res.render('user/tweetsList',{
-                viewTitle: "Tweets List",
-                ListofTweets: data
+            // res.render('user/tweetsList',{
+            //     viewTitle: "Tweets List",
+            //     ListofTweets: data
 
-            })
+            // })
+            res.send(data);
+            res.end();
         }
     })
 });
@@ -43,11 +46,13 @@ router.get('/list', (req,res)=>{
             }
             });
             console.log(data);
-            res.render('user/tweetsList',{
-                viewTitle: "Tweets List",
-                ListofTweets: data
+            // res.render('user/tweetsList',{
+            //     viewTitle: "Tweets List",
+            //     ListofTweets: data
 
-            })
+            // })
+            res.send(data);
+            res.end();
         }
     })
 });

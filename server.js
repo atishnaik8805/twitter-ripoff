@@ -1,6 +1,7 @@
 require('./models/db');
 
 const express = require('express');
+const cors = require('cors');
 const path = require('path');
 const  exphbs = require('express-handlebars');
 const bodyparser = require('body-parser');
@@ -8,6 +9,9 @@ const bodyparser = require('body-parser');
 const userController = require('./controllers/userController');
 const TweetController = require('./controllers/TweetController');
 var app = express();
+app.use(cors({
+    origin: 'http://localhost:3007'
+}));
 app.use(bodyparser.urlencoded({
     extended: true
 }));
