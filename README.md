@@ -1,2 +1,2 @@
-# twitter-ripoff-backend
+# twitter-ripoff
 backend with express handlebars 
