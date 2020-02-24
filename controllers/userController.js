@@ -47,7 +47,8 @@ function login(req,res) {
               console.log(doc)
               let result = {
                       email: doc.email,
-                      pwd: doc.password
+                      pwd: doc.password,
+                      date: Date.now()
                   };
                 if(result.pwd == req.body.password)
                 {
@@ -56,7 +57,7 @@ function login(req,res) {
                     //     ListofTweets: [{Tweet: "Hello World",Date: "19/02/2020",Hashtags: ['hello','firstTweet']}]
                     // });
                     //res.writeHead(200, {"Content-Type": "application/json"});
-                    var token = jwt.sign({result: result}, 'secretKey');
+                    var token = jwt.sign({data: result}, 'secretKey');
                     res.send({login:"Sucess", token: token});
                 }
                 
@@ -118,10 +119,11 @@ function insertUserRecord(req,res) {
             console.log('in here');
             var newuserdata = {
                 email : newUser.email,
-                password: newUser.password
+                password: newUser.password,
+                date: Date.now()
             } 
             //res.redirect('user/list');
-            var token = jwt.sign({newuserdata : newuserdata}, 'secretKey');
+            var token = jwt.sign({data : newuserdata}, 'secretKey');
             res.status(200).json({register:"Sucess", token: token});
             var newTweet = new tweet();
             newTweet.username = newUser.username;

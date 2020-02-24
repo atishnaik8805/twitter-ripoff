@@ -26,15 +26,16 @@ const token = localStorage.TweetToken;
 if(token) {
   console.log('in the hhh');
  const decodedToken = jwtDecode(token);
- console.log(decodedToken);
- if(decodedToken.exp * 100 < Date.now()){
+
+ if(decodedToken.data.date  < Date.now()){
    console.log('unhjjd')
-   window.location.href = '/login';
+   //window.location.href = '/login';
    authenticated = false;
  }
  else {
    console.log(authenticated);
    authenticated = true;
+   localStorage.removeItem('TweetToken');
  }
 }
 /*
