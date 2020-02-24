@@ -67,7 +67,7 @@ class signup extends Component {
         .then((res) => {
             console.log(res.data);
             //when you add token
-            //localStorage.setItem('TweetToken', `TID ${res.data.token}`)
+            localStorage.setItem('TweetToken', `TID ${res.data.token}`)
             this.setState({
                 loading: false
             });

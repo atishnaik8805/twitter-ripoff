@@ -27,7 +27,7 @@ if(token) {
   console.log('in the hhh');
  const decodedToken = jwtDecode(token);
  console.log(decodedToken);
- if(decodedToken.exp * 1000 < Date.now()){
+ if(decodedToken.exp * 100 < Date.now()){
    console.log('unhjjd')
    window.location.href = '/login';
    authenticated = false;

@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const user = mongoose.model('users');
 const http = require('http');
 const jwt = require('jsonwebtoken');
-
+const tweet = mongoose.model('tweets')
 const isEmpty = (string) => {
     if (string.trim() === '') return true;
     else return false;
@@ -104,8 +104,8 @@ function handleValidation(query, res) {
 }
 
 function insertUserRecord(req,res) {
+ 
  var validateError = ValidateInputs(req, res)
- console.log('validateErro', validateError);
  if (!validateError) {
     var newUser = new user();
     newUser.fullName = req.body.fullName;
@@ -123,7 +123,19 @@ function insertUserRecord(req,res) {
             //res.redirect('user/list');
             var token = jwt.sign({newuserdata : newuserdata}, 'secretKey');
             res.status(200).json({register:"Sucess", token: token});
-   
+            var newTweet = new tweet();
+            newTweet.username = newUser.username;
+            newTweet.Tweet = "Hello Twiiter, i am" + newUser.username
+            newTweet.Date = Date.now();
+            newTweet.Hashtags = ['Fisrt Tweet','Automatically'];
+            newTweet.save((err,doc)=>{
+            if(!err){
+
+            }
+            else {
+                console.log(err)
+            }
+            })
         }
         else
         {
