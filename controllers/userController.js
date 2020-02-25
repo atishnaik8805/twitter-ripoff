@@ -4,7 +4,8 @@ const mongoose = require('mongoose');
 const user = mongoose.model('users');
 const http = require('http');
 const jwt = require('jsonwebtoken');
-const tweet = mongoose.model('tweets')
+const tweet = mongoose.model('tweets');
+const secretKey = process.env.SECRET || 'secretKey'
 const isEmpty = (string) => {
     if (string.trim() === '') return true;
     else return false;
@@ -57,7 +58,7 @@ function login(req,res) {
                     //     ListofTweets: [{Tweet: "Hello World",Date: "19/02/2020",Hashtags: ['hello','firstTweet']}]
                     // });
                     //res.writeHead(200, {"Content-Type": "application/json"});
-                    var token = jwt.sign({data: result}, 'secretKey');
+                    var token = jwt.sign({data: result}, secretKey);
                     res.send({login:"Sucess", token: token});
                 }
                 
@@ -123,7 +124,7 @@ function insertUserRecord(req,res) {
                 date: Date.now()
             } 
             //res.redirect('user/list');
-            var token = jwt.sign({data : newuserdata}, 'secretKey');
+            var token = jwt.sign({data : newuserdata}, secretKey);
             res.status(200).json({register:"Sucess", token: token});
             var newTweet = new tweet();
             newTweet.username = newUser.username;

@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 
 var db_instance = null
-mongoose.connect('mongodb://localhost:27017/TwitterDB', {useNewUrlParser:true} , (err,db) => {
+const DB = process.env.MONGODB_URI || 'mongodb://localhost:27017/TwitterDB';
+mongoose.connect(DB, {useNewUrlParser:true} , (err,db) => {
     if(!err){
      console.log('MongoDB Connection Succesfull');
     }
