@@ -35,6 +35,7 @@ router.post('/list', (req,res)=>{
 });
 
 router.get('/list', (req,res)=>{
+    console.log('req', req);
     tweet.find((err,docs)=>{
         if(!err){
             let data = docs.map(doc => {

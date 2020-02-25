@@ -60,7 +60,7 @@ class login extends Component {
             email: this.state.email,
             password: this.state.password
         }
-        axios.post('http://localhost:3000/user/login', userData)
+        axios.post('/user/login', userData)
         .then(res => {
             console.log(res.data);
             //when you add token

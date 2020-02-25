@@ -8,14 +8,14 @@ class home extends Component {
         tweets: null
     }
     componentDidMount() {
-        axios.get('http://localhost:3000/tweet/list')
+        axios.post('/tweet/list', {data: 'w'})
         .then(res => {
             console.log(res.data)
             this.setState({
                 tweets: res.data
             })
         })
-        .catch(err => console.log(err));
+        .catch(err => console.log('hhh',err));
     }
     render() {
         let recentTweetMarkup = this.state.tweets ? (
